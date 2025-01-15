@@ -48,8 +48,8 @@ def createTables(dbName):
             ciudad_capital VARCHAR(100),
             lider_actual VARCHAR(100),
             poder_monetario DECIMAL(15, 2),
-            inteligencia INT,
-            ejercito INT,
+            inteligencia INT CHECK (inteligencia BETWEEN 1 AND 10),
+            ejercito INT CHECK (ejercito BETWEEN 1 AND 10),
             poblacion INT
         );
 
@@ -91,80 +91,200 @@ def createTables(dbName):
  
         conn.commit()
 
-        loadData(cur, conn)
+        
 
         cur.close()
         conn.close()
+        loadData()
 
     except Exception as e:
         print(f"Error: {e}")
 
-def loadData(cur, conn):
-    # Insertar datos en la tabla Civilizacion
+def loadData():
+    
+    conn = psycopg2.connect(
+        dbname="civilizationsimulator",  
+        user="emiliano",  
+        password="Emiliano123",  
+        host="localhost",  
+        port="5432"
+    )
+
+    cur = conn.cursor()
+
     insert_query_civilizacion = """
         INSERT INTO Civilizacion (nombre, ciudad_capital, lider_actual, poder_monetario, inteligencia, ejercito, poblacion)
         VALUES 
-        ('Azteca', 'Tenochtitlán', 'Montezuma II', 124500.00, 85, 12000, 1500000),
-        ('Egipcia', 'Menfis', 'Cleopatra VII', 180000.50, 90, 8000, 2000000),
-        ('Romana', 'Roma', 'Julio César', 300000.00, 95, 25000, 4000000),
-        ('Vikinga', 'Kattegat', 'Ragnar Lothbrok', 75000.00, 70, 15000, 800000),
-        ('China', 'Xian', 'Qin Shi Huang', 220000.00, 98, 18000, 5000000);
+        ('Azterna', 'Luminaris', 'Solaria Eclipse', 250000.00, 8, 4, 1200000),
+        ('Nyboria', 'Umbraterra', 'Kael Umbra', 175000.50, 7, 3, 950000),
+        ('Velmoria', 'Zenthara', 'Artemis Nova', 300000.00, 9, 5, 2200000),
+        ('Aqualis', 'Hydronix', 'Poseidros Marinus', 190000.00, 6, 4, 1800000),
+        ('Pyrosis', 'Flamidor', 'Ignatia Blaze', 200000.00, 5, 6, 1700000),
+        ('Aerion', 'Skylantis', 'Zephyr Tempus', 225000.00, 6, 4, 1600000),
+        ('Terranova', 'Gaiapolis', 'Terra Verde', 210000.00, 8, 3, 1900000),
+        ('Celestica', 'Astropolis', 'Luna Starfall', 320000.00, 9, 2, 1500000),
+        ('Frostgard', 'Cryonis', 'Aurora Frostbane', 180000.00, 6, 5, 1400000),
+        ('Mystara', 'Enigma', 'Arcana Shade', 240000.00, 10, 3, 1000000);
     """
     cur.execute(insert_query_civilizacion)
 
-    # Insertar datos en la tabla Aliados
     insert_query_aliados = """
         INSERT INTO Aliados (civi_1_id, civi_2_id, nivel)
         VALUES 
-        (1, 2, 7),
-        (3, 5, 9),
-        (2, 5, 6),
-        (4, 1, 8),
-        (3, 4, 5);
+        (1, 2, 8),
+        (3, 4, 6),
+        (5, 6, 7),
+        (7, 8, 9),
+        (2, 3, 5),
+        (4, 5, 8),
+        (1, 9, 6),
+        (6, 10, 4),
+        (8, 10, 7),
+        (3, 7, 5);
     """
     cur.execute(insert_query_aliados)
 
-    # Insertar datos en la tabla Enemigos
     insert_query_enemigos = """
         INSERT INTO Enemigos (civi_1_id, civi_2_id, nivel)
         VALUES 
-        (1, 3, 8),
-        (2, 4, 7),
-        (3, 1, 9),
-        (4, 5, 6),
-        (5, 2, 10);
+        (1, 3, 9),
+        (2, 5, 7),
+        (4, 6, 8),
+        (7, 9, 5),
+        (8, 10, 6),
+        (3, 5, 9),
+        (2, 6, 7),
+        (1, 8, 8),
+        (4, 10, 6),
+        (9, 5, 5);
     """
     cur.execute(insert_query_enemigos)
 
-    # Insertar datos en la tabla Territorio
     insert_query_territorio = """
         INSERT INTO Territorio (nombre, ocupante_actual, ocupante_anterior)
         VALUES 
-        ('Valle del Nilo', 2, NULL),
-        ('Coliseo', 3, NULL),
-        ('Mesoamérica', 1, 4),
-        ('Vinlandia', 4, NULL),
-        ('Muralla China', 5, NULL);
+        ('Bosque de Luminaris', 1, 2),
+        ('Montañas de Umbraterra', 2, 3),
+        ('Llanuras de Zenthara', 3, 4),
+        ('Islas de Hydronix', 4, 5),
+        ('Desiertos de Flamidor', 5, 6),
+        ('Cumbres de Skylantis', 6, 7),
+        ('Valles de Gaiapolis', 7, 8),
+        ('Asteroides de Astropolis', 8, 9),
+        ('Glaciares de Cryonis', 9, 10),
+        ('Ruinas de Enigma', 10, 1);
     """
     cur.execute(insert_query_territorio)
 
-    # Insertar datos en la tabla Recursos
     insert_query_recursos = """
         INSERT INTO Recursos (civi_id, madera, metal, piedra, agua, comida)
         VALUES 
-        (1, 5000, 7000, 8000, 10000, 9000),
-        (2, 6000, 5000, 4000, 12000, 11000),
-        (3, 8000, 15000, 12000, 13000, 15000),
-        (4, 10000, 9000, 7000, 8000, 12000),
-        (5, 12000, 14000, 16000, 20000, 18000);
+        (1, 500, 300, 200, 1000, 800),
+        (2, 600, 400, 300, 1200, 900),
+        (3, 700, 500, 400, 1400, 1000),
+        (4, 800, 600, 500, 1600, 1100),
+        (5, 900, 700, 600, 1800, 1200),
+        (6, 1000, 800, 700, 2000, 1300),
+        (7, 1100, 900, 800, 2200, 1400),
+        (8, 1200, 1000, 900, 2400, 1500),
+        (9, 1300, 1100, 1000, 2600, 1600),
+        (10, 1400, 1200, 1100, 2800, 1700);
     """
     cur.execute(insert_query_recursos)
 
-    # Confirmar los cambios
-    conn.commit()
 
-    # Ver los datos insertados en la tabla Civilizacion
-    cur.execute("SELECT * FROM Civilizacion;")
-    rows = cur.fetchall()
-    for row in rows:
-        print(row)
+
+    conn.commit()
+    cur.close()
+    conn.close()
+   
+
+def updateTableCivilization(cName, op, data):
+    conn = psycopg2.connect(
+        dbname="civilizationsimulator",  
+        user="emiliano",  
+        password="Emiliano123",  
+        host="localhost",  
+        port="5432"
+    )
+
+    cur = conn.cursor()
+
+    if op == 1:  
+        query = f"UPDATE Civilizacion SET nombre = {data} WHERE nombre = {cName}"
+        cur.execute(query, (data, cName))
+    elif op == 2:  
+        query = f"UPDATE Civilizacion SET ciudad_capital = {data} WHERE nombre = {cName}"
+        cur.execute(query, (data, cName))
+    elif op == 3:  
+        query = f"UPDATE Civilizacion SET lider_actual = {data} WHERE nombre = {cName}"
+        cur.execute(query, (data, cName))
+    elif op == 4:  
+        query = f"UPDATE Civilizacion SET poder_monetario = {data} WHERE nombre = {cName}"
+        cur.execute(query, (data, cName))
+    elif op == 5:  
+        query = f"UPDATE Civilizacion SET inteligencia = {data} WHERE nombre = {cName}"
+        cur.execute(query, (data, cName))
+    elif op == 6:  
+        query = f"UPDATE Civilizacion SET ejercito = {data} WHERE nombre = {cName}"
+        cur.execute(query, (data, cName))
+    elif op == 7:  
+        query = f"UPDATE Civilizacion SET poblacion = {data} WHERE nombre = {cName}"
+        cur.execute(query, (data, cName))
+    else:
+        print("Error: Operación no válida.")
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def updateTableAliados(cId1, cId2, op, data):
+    conn = psycopg2.connect(
+        dbname="civilizationsimulator",  
+        user="emiliano",  
+        password="Emiliano123",  
+        host="localhost",  
+        port="5432"
+    )
+
+    cur = conn.cursor()
+
+    if op == 1:  
+        query = f"UPDATE Aliados SET nivel = {data} WHERE civi_1_id = {cId1} and civi_2_id = {cId2}"
+        cur.execute(query, (data, cId1, cId2))
+    elif op == 2:  
+        query = f"DELETE FROM Aliados WHERE civi_1_id = {cId1} and civi_2_id = {cId2}"
+        cur.execute(query, (data, cId1, cId2))
+    
+    else:
+        print("Error: Operación no válida.")
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def updateTableEnemigos(cId1, cId2, op, data):
+
+    conn = psycopg2.connect(
+        dbname="civilizationsimulator",  
+        user="emiliano",  
+        password="Emiliano123",  
+        host="localhost",  
+        port="5432"
+    )
+
+    cur = conn.cursor()
+
+    if op == 1:  
+        query = f"UPDATE Enemigos SET nivel = {data} WHERE civi_1_id = {cId1} and civi_2_id = {cId2}"
+        cur.execute(query, (data, cId1, cId2))
+    elif op == 2:  
+        query = f"DELETE FROM Enemigos WHERE civi_1_id = {cId1} and civi_2_id = {cId2}"
+        cur.execute(query, (data, cId1, cId2))
+    
+    else:
+        print("Error: Operación no válida.")
+
+    conn.commit()
+    cur.close()
+    conn.close()
