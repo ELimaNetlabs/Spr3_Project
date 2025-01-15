@@ -1,6 +1,5 @@
-from db import postgreSQL, influxDB
-from influxdb_client import Point
-import os,time
+import eventsManager as em
+import os,time,random
 def menu_principal():
     os.system('clear')
     print("Bienvenido...")
@@ -25,38 +24,65 @@ def iniciar_simulacion():
     os.system('clear')
     print("*** Simulación iniciada ***")
 
-def eventoGuerra(civ1, civ2, resultado):
-    if resultado == "victoria":
-        postgreSQL.updateTableCivilization(civ1, 6, 2)  # Aumenta el ejército del ganador.
-        postgreSQL.updateTableCivilization(civ2, 6, -2)  # Disminuye el ejército del perdedor.
-        postgreSQL.updateTableCivilization(civ2, 7, -20000)  # Disminuye población del perdedor.
-    elif resultado == "derrota":
-        postgreSQL.updateTableCivilization(civ2, 6, 2)  # Aumenta el ejército del ganador.
-        postgreSQL.updateTableCivilization(civ1, 6, -2)  # Disminuye el ejército del perdedor.
-        postgreSQL.updateTableCivilization(civ1, 7, -20000)  # Disminuye población del perdedor.
-        influxDB.cargarDatos(Point("guerra").tag("civ1", civ1).tag("civ2", civ2).field("resultado", resultado))
+    # Civilizaciones involucradas (pueden ser dinámicas o leídas de la base de datos)
+    civilizaciones = ["Civ1", "Civ2", "Civ3", "Civ4"]
 
-def eventoAvanceTecnologico(civ, inteligencia_aumento, poder_monetario_aumento):
-    postgreSQL.updateTableCivilization(civ, 5, inteligencia_aumento)  # Aumenta la inteligencia.
-    postgreSQL.updateTableCivilization(civ, 4, poder_monetario_aumento)  # Incrementa el poder monetario.
-    influxDB.cargarDatos(Point("avance_tecnologico").tag("civilizacion", civ).field("inteligencia", inteligencia_aumento).field("poder_monetario", poder_monetario_aumento))
+    # Llamada aleatoria a eventos
+    for turno in range(1, 11):  # 10 turnos de simulación
+        print(f"\nTurno {turno}")
+        
+        evento_aleatorio = random.choice(['guerra', 'avance_tecnologico', 'desastre_natural', 'crecimiento_poblacional', 'comercio', 'formacion_alianza'])
+        
+        if evento_aleatorio == 'guerra':
+            # Se eligen dos civilizaciones aleatorias para la guerra
+            civ1, civ2 = random.sample(civilizaciones, 2)
+            resultado = random.choice([0, 1])  # 0: Derrota, 1: Victoria
+            print(f"Evento: Guerra entre {civ1} y {civ2}. Resultado: {'Victoria' if resultado == 1 else 'Derrota'}")
+            em.eventoGuerra(civ1, civ2, resultado)
+        
+        elif evento_aleatorio == 'avance_tecnologico':
+            # Se elige una civilización aleatoria y se le asignan incrementos aleatorios en tecnología
+            civ = random.choice(civilizaciones)
+            inteligencia_aumento = random.randint(1, 5)
+            poder_monetario_aumento = random.randint(100, 1000)
+            print(f"Evento: Avance tecnológico en {civ}. Incrementos: Inteligencia +{inteligencia_aumento}, Poder Monetario +{poder_monetario_aumento}")
+            em.eventoAvanceTecnologico(civ, inteligencia_aumento, poder_monetario_aumento)
+        
+        elif evento_aleatorio == 'desastre_natural':
+            # Se elige una civilización aleatoria para el desastre natural
+            civ = random.choice(civilizaciones)
+            perdida_poblacion = random.randint(1000, 10000)
+            perdida_recursos = random.randint(500, 5000)
+            print(f"Evento: Desastre natural en {civ}. Pérdida de población: {perdida_poblacion}, Pérdida de recursos: {perdida_recursos}")
+            em.eventoDesastreNatural(civ, perdida_poblacion, perdida_recursos)
+        
+        elif evento_aleatorio == 'crecimiento_poblacional':
+            # Se elige una civilización aleatoria para el crecimiento poblacional
+            civ = random.choice(civilizaciones)
+            incremento_poblacion = random.randint(1000, 5000)
+            print(f"Evento: Crecimiento poblacional en {civ}. Incremento: {incremento_poblacion}")
+            em.eventoCrecimientoPoblacional(civ, incremento_poblacion)
+        
+        elif evento_aleatorio == 'comercio':
+            # Se eligen dos civilizaciones aleatorias para un evento de comercio
+            civ1, civ2 = random.sample(civilizaciones, 2)
+            cantidad_oro = random.randint(100, 1000)
+            print(f"Evento: Comercio entre {civ1} y {civ2}. Cantidad de oro intercambiado: {cantidad_oro}")
+            em.eventoComercio(civ1, civ2, cantidad_oro)
+        
+        elif evento_aleatorio == 'formacion_alianza':
+            # Se eligen dos civilizaciones aleatorias para formar una alianza
+            civ1, civ2 = random.sample(civilizaciones, 2)
+            nivel = random.randint(1, 5)  # El nivel de la alianza puede ser aleatorio
+            print(f"Evento: Formación de alianza entre {civ1} y {civ2}. Nivel de la alianza: {nivel}")
+            em.eventoFormacionAlianza(civ1, civ2, nivel)
+        
+        # Introducimos un retraso para que los eventos se vean con tiempo
+        tiempo_espera = random.uniform(1, 3)  # Espera aleatoria entre 1 y 3 segundos
+        time.sleep(tiempo_espera)
 
-def eventoDesastreNatural(civ, perdida_poblacion, perdida_recursos):
-    postgreSQL.updateTableCivilization(civ, 7, -perdida_poblacion)  # Reduce la población.
-    influxDB.cargarDatos(Point("desastre_natural").tag("civilizacion", civ).field("poblacion_perdida", perdida_poblacion).field("recursos_perdidos", perdida_recursos))
 
-def eventoCrecimientoPoblacional(civ, incremento_poblacion):
-    postgreSQL.updateTableCivilization(civ, 7, incremento_poblacion)  # Incrementa la población.
-    influxDB.cargarDatos(Point("crecimiento_poblacional").tag("civilizacion", civ).field("incremento_poblacion", incremento_poblacion))
 
-def eventoComercio(civ1, civ2, cantidad_oro):
-    postgreSQL.updateTableCivilization(civ1, 4, -cantidad_oro)  # Reduce el oro de la civilización 1.
-    postgreSQL.updateTableCivilization(civ2, 4, cantidad_oro)  # Aumenta el oro de la civilización 2.
-    influxDB.cargarDatos(Point("comercio").tag("civ1", civ1).tag("civ2", civ2).field("cantidad_oro", cantidad_oro))
-
-def eventoFormacionAlianza(civ1, civ2, nivel):
-    postgreSQL.updateTableAliados(civ1, civ2, nivel)  # Registra una nueva alianza.
-    influxDB.cargarDatos(Point("alianza").tag("civ1", civ1).tag("civ2", civ2).field("nivel", nivel))
 
 if __name__ == "__main__":
     menu_principal()

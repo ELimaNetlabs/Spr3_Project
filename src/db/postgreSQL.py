@@ -199,7 +199,7 @@ def loadData():
     conn.close()
    
 
-def updateTableCivilization(cName, op, data):
+def updateTableCivilization(cId, op, data):
     conn = psycopg2.connect(
         dbname="civilizationsimulator",  
         user="emiliano",  
@@ -211,26 +211,26 @@ def updateTableCivilization(cName, op, data):
     cur = conn.cursor()
 
     if op == 1:  
-        query = f"UPDATE Civilizacion SET nombre = {data} WHERE nombre = {cName}"
-        cur.execute(query, (data, cName))
+        query = f"UPDATE Civilizacion SET nombre = {data} WHERE id = {cId}"
+        cur.execute(query, (data, cId))
     elif op == 2:  
-        query = f"UPDATE Civilizacion SET ciudad_capital = {data} WHERE nombre = {cName}"
-        cur.execute(query, (data, cName))
+        query = f"UPDATE Civilizacion SET ciudad_capital = {data} WHERE id = {cId}"
+        cur.execute(query, (data, cId))
     elif op == 3:  
-        query = f"UPDATE Civilizacion SET lider_actual = {data} WHERE nombre = {cName}"
-        cur.execute(query, (data, cName))
+        query = f"UPDATE Civilizacion SET lider_actual = {data} WHERE id = {cId}"
+        cur.execute(query, (data, cId))
     elif op == 4:  
-        query = f"UPDATE Civilizacion SET poder_monetario = {data} WHERE nombre = {cName}"
-        cur.execute(query, (data, cName))
+        query = f"UPDATE Civilizacion SET poder_monetario = {data} WHERE id = {cId}"
+        cur.execute(query, (data, cId))
     elif op == 5:  
-        query = f"UPDATE Civilizacion SET inteligencia = {data} WHERE nombre = {cName}"
-        cur.execute(query, (data, cName))
+        query = f"UPDATE Civilizacion SET inteligencia = {data} WHERE id = {cId}"
+        cur.execute(query, (data, cId))
     elif op == 6:  
-        query = f"UPDATE Civilizacion SET ejercito = {data} WHERE nombre = {cName}"
-        cur.execute(query, (data, cName))
+        query = f"UPDATE Civilizacion SET ejercito = {data} WHERE id = {cId}"
+        cur.execute(query, (data, cId))
     elif op == 7:  
-        query = f"UPDATE Civilizacion SET poblacion = {data} WHERE nombre = {cName}"
-        cur.execute(query, (data, cName))
+        query = f"UPDATE Civilizacion SET poblacion = {data} WHERE id = {cId}"
+        cur.execute(query, (data, cId))
     else:
         print("Error: Operación no válida.")
 
