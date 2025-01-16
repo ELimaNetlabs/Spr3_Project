@@ -220,7 +220,7 @@ def updateTableCivilization(cId, op, data):
         query = "UPDATE Civilizacion SET lider_actual = %s WHERE id = %s"
         cur.execute(query, (data, cId))
     elif op == 4:  
-        query = "UPDATE Civilizacion SET poder_monetario = %s WHERE id = %s"
+        query = "UPDATE Civilizacion SET poder_monetario = poder_monetario + %s WHERE id = %s"
         cur.execute(query, (data, cId))
     elif op == 5:  
         query = "UPDATE Civilizacion SET inteligencia = %s WHERE id = %s"
@@ -228,11 +228,17 @@ def updateTableCivilization(cId, op, data):
     elif op == 6:  
         query = "UPDATE Civilizacion SET ejercito = ejercito + %s WHERE id = %s"
         cur.execute(query, (data, cId))
+    elif op == 7:  
+        query = "UPDATE Civilizacion SET poblacion = poblacion + %s WHERE id = %s"
+        cur.execute(query, (data, cId))
     elif op == 8:  
         query = "UPDATE Civilizacion SET ejercito = ejercito - %s WHERE id = %s"
         cur.execute(query, (data, cId))
-    elif op == 7:  
-        query = "UPDATE Civilizacion SET poblacion = %s WHERE id = %s"
+    elif op == 9:  
+        query = "UPDATE Civilizacion SET poder_monetario = poder_monetario - %s WHERE id = %s"
+        cur.execute(query, (data, cId))
+    elif op == 10:  
+        query = "UPDATE Civilizacion SET poblacion = poblacion - %s WHERE id = %s"
         cur.execute(query, (data, cId))
     else:
         print("Error: Operación no válida.")

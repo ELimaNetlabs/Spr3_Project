@@ -51,7 +51,7 @@ def iniciar_simulacion():
         elif evento_aleatorio == 'desastre_natural':
             # Se elige una civilización aleatoria para el desastre natural
             civ = random.randint(1,10)
-            perdida_poblacion = random.randint(1000, 10000)
+            perdida_poblacion = random.randint(1000, 5000)
             perdida_recursos = random.randint(500, 5000)
             print(f"Evento: Desastre natural en {civ}. Pérdida de población: {perdida_poblacion}, Pérdida de recursos: {perdida_recursos}")
             em.eventoDesastreNatural(civ, perdida_poblacion, perdida_recursos)
