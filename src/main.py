@@ -24,9 +24,6 @@ def iniciar_simulacion():
     os.system('clear')
     print("*** Simulación iniciada ***")
 
-    # Civilizaciones involucradas (pueden ser dinámicas o leídas de la base de datos)
-    civilizaciones = ["Civ1", "Civ2", "Civ3", "Civ4"]
-
     # Llamada aleatoria a eventos
     for turno in range(1, 11):  # 10 turnos de simulación
         print(f"\nTurno {turno}")
@@ -34,15 +31,18 @@ def iniciar_simulacion():
         evento_aleatorio = random.choice(['guerra', 'avance_tecnologico', 'desastre_natural', 'crecimiento_poblacional', 'comercio', 'formacion_alianza'])
         
         if evento_aleatorio == 'guerra':
-            # Se eligen dos civilizaciones aleatorias para la guerra
-            civ1, civ2 = random.sample(civilizaciones, 2)
-            resultado = random.choice([0, 1])  # 0: Derrota, 1: Victoria
+            
+            civ1 = random.randint(1,10)
+            civ2 = random.randint(1,10)
+            if civ1 == civ2:
+                civ2 += 1
+            resultado = random.randint(0,2)  # 0: Derrota, 1: Victoria
             print(f"Evento: Guerra entre {civ1} y {civ2}. Resultado: {'Victoria' if resultado == 1 else 'Derrota'}")
             em.eventoGuerra(civ1, civ2, resultado)
         
         elif evento_aleatorio == 'avance_tecnologico':
             # Se elige una civilización aleatoria y se le asignan incrementos aleatorios en tecnología
-            civ = random.choice(civilizaciones)
+            civ = random.randint(1,10)
             inteligencia_aumento = random.randint(1, 5)
             poder_monetario_aumento = random.randint(100, 1000)
             print(f"Evento: Avance tecnológico en {civ}. Incrementos: Inteligencia +{inteligencia_aumento}, Poder Monetario +{poder_monetario_aumento}")
@@ -50,7 +50,7 @@ def iniciar_simulacion():
         
         elif evento_aleatorio == 'desastre_natural':
             # Se elige una civilización aleatoria para el desastre natural
-            civ = random.choice(civilizaciones)
+            civ = random.randint(1,10)
             perdida_poblacion = random.randint(1000, 10000)
             perdida_recursos = random.randint(500, 5000)
             print(f"Evento: Desastre natural en {civ}. Pérdida de población: {perdida_poblacion}, Pérdida de recursos: {perdida_recursos}")
@@ -58,21 +58,27 @@ def iniciar_simulacion():
         
         elif evento_aleatorio == 'crecimiento_poblacional':
             # Se elige una civilización aleatoria para el crecimiento poblacional
-            civ = random.choice(civilizaciones)
+            civ = random.randint(1,10)
             incremento_poblacion = random.randint(1000, 5000)
             print(f"Evento: Crecimiento poblacional en {civ}. Incremento: {incremento_poblacion}")
             em.eventoCrecimientoPoblacional(civ, incremento_poblacion)
         
         elif evento_aleatorio == 'comercio':
             # Se eligen dos civilizaciones aleatorias para un evento de comercio
-            civ1, civ2 = random.sample(civilizaciones, 2)
+            civ1 = random.randint(1,10)
+            civ2 = random.randint(1,10)
+            if civ1 == civ2:
+                civ2 += 1
             cantidad_oro = random.randint(100, 1000)
             print(f"Evento: Comercio entre {civ1} y {civ2}. Cantidad de oro intercambiado: {cantidad_oro}")
             em.eventoComercio(civ1, civ2, cantidad_oro)
         
         elif evento_aleatorio == 'formacion_alianza':
             # Se eligen dos civilizaciones aleatorias para formar una alianza
-            civ1, civ2 = random.sample(civilizaciones, 2)
+            civ1 = random.randint(1,10)
+            civ2 = random.randint(1,10)
+            if civ1 == civ2:
+                civ2 += 1
             nivel = random.randint(1, 5)  # El nivel de la alianza puede ser aleatorio
             print(f"Evento: Formación de alianza entre {civ1} y {civ2}. Nivel de la alianza: {nivel}")
             em.eventoFormacionAlianza(civ1, civ2, nivel)

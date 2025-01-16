@@ -4,12 +4,12 @@ from influxdb_client import Point
 def eventoGuerra(civ1, civ2, resultado):
     if resultado == 1: #Victoria
         postgreSQL.updateTableCivilization(civ1, 6, 2)  # Aumenta el ejército del ganador.
-        postgreSQL.updateTableCivilization(civ2, 6, -2)  # Disminuye el ejército del perdedor.
-        postgreSQL.updateTableCivilization(civ2, 7, -20000)  # Disminuye población del perdedor.
+        postgreSQL.updateTableCivilization(civ2, 8, 1)  # Disminuye el ejército del perdedor.
+        postgreSQL.updateTableCivilization(civ2, 7, -2000)  # Disminuye población del perdedor.
     elif resultado == 0: #Derrota
         postgreSQL.updateTableCivilization(civ2, 6, 2)  # Aumenta el ejército del ganador.
-        postgreSQL.updateTableCivilization(civ1, 6, -2)  # Disminuye el ejército del perdedor.
-        postgreSQL.updateTableCivilization(civ1, 7, -20000)  # Disminuye población del perdedor.
+        postgreSQL.updateTableCivilization(civ1, 8, 1)  # Disminuye el ejército del perdedor.
+        postgreSQL.updateTableCivilization(civ1, 7, -2000)  # Disminuye población del perdedor.
         influxDB.cargarDatos(Point("guerra").tag("civ1", civ1).tag("civ2", civ2).field("resultado", resultado))
 
 def eventoAvanceTecnologico(civ, inteligencia_aumento, poder_monetario_aumento):
@@ -31,5 +31,5 @@ def eventoComercio(civ1, civ2, cantidad_oro):
     influxDB.cargarDatos(Point("comercio").tag("civ1", civ1).tag("civ2", civ2).field("cantidad_oro", cantidad_oro))
 
 def eventoFormacionAlianza(civ1, civ2, nivel):
-    postgreSQL.updateTableAliados(civ1, civ2, nivel)  # Registra una nueva alianza.
+    postgreSQL.updateTableAliados(civ1, civ2, 3, nivel)  # Registra una nueva alianza.
     influxDB.cargarDatos(Point("alianza").tag("civ1", civ1).tag("civ2", civ2).field("nivel", nivel))

@@ -211,25 +211,28 @@ def updateTableCivilization(cId, op, data):
     cur = conn.cursor()
 
     if op == 1:  
-        query = f"UPDATE Civilizacion SET nombre = {data} WHERE id = {cId}"
+        query = "UPDATE Civilizacion SET nombre = %s WHERE id = %s"
         cur.execute(query, (data, cId))
     elif op == 2:  
-        query = f"UPDATE Civilizacion SET ciudad_capital = {data} WHERE id = {cId}"
+        query = "UPDATE Civilizacion SET ciudad_capital = %s WHERE id = %s"
         cur.execute(query, (data, cId))
     elif op == 3:  
-        query = f"UPDATE Civilizacion SET lider_actual = {data} WHERE id = {cId}"
+        query = "UPDATE Civilizacion SET lider_actual = %s WHERE id = %s"
         cur.execute(query, (data, cId))
     elif op == 4:  
-        query = f"UPDATE Civilizacion SET poder_monetario = {data} WHERE id = {cId}"
+        query = "UPDATE Civilizacion SET poder_monetario = %s WHERE id = %s"
         cur.execute(query, (data, cId))
     elif op == 5:  
-        query = f"UPDATE Civilizacion SET inteligencia = {data} WHERE id = {cId}"
+        query = "UPDATE Civilizacion SET inteligencia = %s WHERE id = %s"
         cur.execute(query, (data, cId))
     elif op == 6:  
-        query = f"UPDATE Civilizacion SET ejercito = {data} WHERE id = {cId}"
+        query = "UPDATE Civilizacion SET ejercito = ejercito + %s WHERE id = %s"
+        cur.execute(query, (data, cId))
+    elif op == 8:  
+        query = "UPDATE Civilizacion SET ejercito = ejercito - %s WHERE id = %s"
         cur.execute(query, (data, cId))
     elif op == 7:  
-        query = f"UPDATE Civilizacion SET poblacion = {data} WHERE id = {cId}"
+        query = "UPDATE Civilizacion SET poblacion = %s WHERE id = %s"
         cur.execute(query, (data, cId))
     else:
         print("Error: Operación no válida.")
@@ -250,12 +253,15 @@ def updateTableAliados(cId1, cId2, op, data):
     cur = conn.cursor()
 
     if op == 1:  
-        query = f"UPDATE Aliados SET nivel = {data} WHERE civi_1_id = {cId1} and civi_2_id = {cId2}"
+        query = "UPDATE Aliados SET nivel = %s WHERE civi_1_id = %s and civi_2_id = %s"
         cur.execute(query, (data, cId1, cId2))
     elif op == 2:  
-        query = f"DELETE FROM Aliados WHERE civi_1_id = {cId1} and civi_2_id = {cId2}"
-        cur.execute(query, (data, cId1, cId2))
-    
+        query = "DELETE FROM Aliados WHERE civi_1_id = %s and civi_2_id = %s"
+        cur.execute(query, (cId1, cId2))
+    elif op == 3:  
+        query = "INSERT INTO Aliados (civi_1_id, civi_2_id, nivel) VALUES (%s, %s, %s)"
+        cur.execute(query, (cId1, cId2, data))
+
     else:
         print("Error: Operación no válida.")
 
@@ -264,7 +270,6 @@ def updateTableAliados(cId1, cId2, op, data):
     conn.close()
 
 def updateTableEnemigos(cId1, cId2, op, data):
-
     conn = psycopg2.connect(
         dbname="civilizationsimulator",  
         user="emiliano",  
@@ -276,12 +281,11 @@ def updateTableEnemigos(cId1, cId2, op, data):
     cur = conn.cursor()
 
     if op == 1:  
-        query = f"UPDATE Enemigos SET nivel = {data} WHERE civi_1_id = {cId1} and civi_2_id = {cId2}"
+        query = "UPDATE Enemigos SET nivel = %s WHERE civi_1_id = %s and civi_2_id = %s"
         cur.execute(query, (data, cId1, cId2))
     elif op == 2:  
-        query = f"DELETE FROM Enemigos WHERE civi_1_id = {cId1} and civi_2_id = {cId2}"
-        cur.execute(query, (data, cId1, cId2))
-    
+        query = "DELETE FROM Enemigos WHERE civi_1_id = %s and civi_2_id = %s"
+        cur.execute(query, (cId1, cId2))
     else:
         print("Error: Operación no válida.")
 
